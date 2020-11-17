@@ -1,6 +1,6 @@
 # CertificateToSQL
 
-A little Hoppy Project of mine. Throw an X509Certificate Object at the Upload-Certificate.ps1 and it gets uploaded into an SQL Server, atomarizing (hopefully all) interesting data.
+A little Hobby Project of mine. Throw an X509Certificate Object at the Upload-Certificate.ps1 and it gets uploaded into an SQL Server, atomarizing (hopefully all) interesting data.
 
 Certificate Files can be converted to an X509Certificate Object with the Open-Certificate.ps1.
 
