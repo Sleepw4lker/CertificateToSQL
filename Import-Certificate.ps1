@@ -71,14 +71,18 @@ process {
 
     # Extract basic Certificate Data
     $CertData = @{
-        SubjectCN           = $Certificate.GetNameInfo($X509NameType_SimpleName,[Int]$False) # For the Case when there is no Key Match possible
-        IssuerCN            = $Certificate.GetNameInfo($X509NameType_SimpleName,[Int]$True) # For the Case when there is no Key Match possible
+        # For the Case when there is no Key Match possible - maybe change to the Full DN...?
+        SubjectCN           = $Certificate.GetNameInfo($X509NameType_SimpleName,[Int]$False)
+        IssuerCN            = $Certificate.GetNameInfo($X509NameType_SimpleName,[Int]$True)
+
         SerialNumber        = $Certificate.SerialNumber
         NotBefore           = $Certificate.NotBefore
         NotAfter            = $Certificate.NotAfter
         KeyAlgorithm        = $Certificate.PublicKey.EncodedKeyValue.Oid.FriendlyName
         KeyLength           = $Certificate.PublicKey.Key.KeySize
         thumbprint          = $Certificate.Thumbprint
+
+        # Maybe also include the Path Length Constraint if it is a CA?
         isCA                = [Int]($Certificate.Extensions.CertificateAuthority)
         SignatureAlgorithm  = $Certificate.SignatureAlgorithm.FriendlyName
     }
@@ -88,7 +92,9 @@ process {
 
         $RDNs = $_.Split('=')
 
+        # Filter out empty results... not sure why this happens
         If (($null -ne $RDNs[0]) -and ($null -ne $RDNs[1])) {
+            
             $SubjectData = @{
                 Name = $RDNs[0].Trim()
                 Value = $RDNs[1]
@@ -278,6 +284,24 @@ process {
 
                             $SubjectData = @{
                                 Name = "UPN"
+                                Value = $SanObject.strValue
+                                Thumbprint = $Certificate.Thumbprint
+                            }
+                        }
+
+                        $XCN_CERT_ALT_NAME_RFC822_NAME {
+
+                            $SubjectData = @{
+                                Name = "RFC822"
+                                Value = $SanObject.strValue
+                                Thumbprint = $Certificate.Thumbprint
+                            }
+                        }
+
+                        $XCN_CERT_ALT_NAME_URL {
+
+                            $SubjectData = @{
+                                Name = "URI"
                                 Value = $SanObject.strValue
                                 Thumbprint = $Certificate.Thumbprint
                             }

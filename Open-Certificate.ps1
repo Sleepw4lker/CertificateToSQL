@@ -21,18 +21,18 @@ process {
             $CertificateObject
         }
         Catch {
-            Write-Warning -Message "Could not import given Object $($Object.Name) as a Certificate Object."
+            Write-Warning -Message "Could not import given File $($Object.Name) as a Certificate Object."
         }
     }
 
-    If ($Object -is [System.String]) {
+    If ($Object -is [PSCustomObject]) {
 
         Try {
-            $CertificateObject.Import([Convert]::FromBase64String($Object))
+            $CertificateObject.Import([Convert]::FromBase64String($Object.RawCertificate))
             $CertificateObject
         }
         Catch {
-            Write-Warning -Message "Could not import given String as a Certificate Object."
+            Write-Warning -Message "Could not import given Object as a Certificate Object."
         }
     }
 }
